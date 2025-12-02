@@ -4,5 +4,5 @@ import java.net.Socket;
 import org.jetbrains.annotations.NotNull;
 
 public interface NewConnectionHandler {
-    void handle(@NotNull Socket socket);
+    void handleNewConnection(@NotNull Socket socket);
 }

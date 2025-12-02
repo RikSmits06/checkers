@@ -11,5 +11,5 @@ public interface ConnectionDataHandler {
      * @param c
      * @return whether the handler wants to continue further handling (false = should exit)
      */
-    boolean handle(@NotNull String data, @NotNull Connection c);
+    boolean handleData(@NotNull String data, @NotNull Connection c);
 }

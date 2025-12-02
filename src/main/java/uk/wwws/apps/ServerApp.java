@@ -10,13 +10,11 @@ import uk.wwws.game.players.ConnectedPlayer;
 import uk.wwws.net.Connection;
 import uk.wwws.net.ConnectionReceiver;
 import uk.wwws.net.ConnectionSender;
-import uk.wwws.net.threads.ConnectedClientThread;
-import uk.wwws.net.threads.ConnectionDataHandler;
-import uk.wwws.net.threads.ServerConnectionThread;
-import uk.wwws.net.threads.ServerThread;
+import uk.wwws.net.threads.*;
 import uk.wwws.tui.Action;
 
-public class ServerApp extends App implements ConnectionReceiver {
+public class ServerApp extends App
+        implements ConnectionReceiver, ConnectionDataHandler, NewConnectionHandler {
     HashSet<ConnectedClientThread> connections = new HashSet<>();
     HashSet<CheckersGame> games = new HashSet<>();
     private @Nullable ServerThread serverThread;
@@ -39,8 +37,9 @@ public class ServerApp extends App implements ConnectionReceiver {
     protected void handleAction(@Nullable Action action) {
         switch (action) {
             case START_SERVER -> handleStartServer();
-            case null, default -> {
-            }
+            case STOP_SERVER -> stopServer();
+            case null, default -> System.out.println(
+                    "Invalid command or wrong argument usage. Type help to get command list");
         }
     }
 
@@ -56,23 +55,20 @@ public class ServerApp extends App implements ConnectionReceiver {
     }
 
     @Override
-    public void handleConnection(@NotNull Connection c) {
-
-    }
-
-    @Override
     public ServerThread spawnServer(int port) {
-        ServerThread newServerThread = new ServerThread(port, this::handleNewConnection);
+        ServerThread newServerThread = new ServerThread(port, this);
         newServerThread.start();
         return newServerThread;
     }
 
-    private void handleNewConnection(@NotNull Socket socket) {
-        connections.add(new ConnectedClientThread(new ConnectedPlayer(new Connection(socket)),
-                                                  this::handleClientPacket));
+    @Override
+    public void handleNewConnection(@NotNull Socket socket) {
+        connections.add(
+                new ConnectedClientThread(new ConnectedPlayer(new Connection(socket)), this));
     }
 
-    private boolean handleClientPacket(@NotNull String data, @NotNull Connection c) {
+    @Override
+    public boolean handleData(@NotNull String data, @NotNull Connection c) {
         return false;
     }
 

@@ -43,7 +43,7 @@ public class ConnectedClientThread extends Thread {
                 break;
             }
 
-            if (!handler.handle(inputLine, this.player.getConnection())) break;
+            if (!handler.handleData(inputLine, this.player.getConnection())) break;
         }
     }
 }

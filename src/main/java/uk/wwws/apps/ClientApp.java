@@ -6,11 +6,13 @@ import uk.wwws.App;
 import uk.wwws.game.players.HumanPlayer;
 import uk.wwws.net.Connection;
 import uk.wwws.net.ConnectionSender;
+import uk.wwws.net.exceptions.FailedToConnectException;
+import uk.wwws.net.threads.ConnectionDataHandler;
 import uk.wwws.net.threads.ServerConnectionThread;
 import uk.wwws.net.threads.ServerThread;
 import uk.wwws.tui.Action;
 
-public class ClientApp extends App implements ConnectionSender {
+public class ClientApp extends App implements ConnectionSender, ConnectionDataHandler {
     private HumanPlayer player;
     private ServerConnectionThread connectionThread;
     private Connection connection;
@@ -35,6 +37,36 @@ public class ClientApp extends App implements ConnectionSender {
 
     @Override
     protected void handleAction(@Nullable Action action) {
+        switch (action) {
+            case CONNECT -> handleConnect();
+            case null, default -> System.out.println(
+                    "Invalid command or wrong argument usage. Type help to get command list");
+        }
+    }
 
+    private void handleConnect() {
+        String host = getNextStringArg();
+        Integer port = getNextIntArg();
+
+        if (host == null || port == null) {
+            System.out.println("Invalid usage. Use: connect <host> <port>");
+            return;
+        }
+
+        System.out.println(host + port);
+        try {
+            connection = new Connection(host, port);
+        } catch (FailedToConnectException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        connectionThread = new ServerConnectionThread(connection, this);
+        connectionThread.start();
+    }
+
+    @Override
+    public boolean handleData(@NotNull String data, @NotNull Connection c) {
+        return false;
     }
 }

@@ -28,9 +28,10 @@ public class ServerThread extends Thread {
 
         while (true) {
             try {
-                handler.handle(socket.accept());
+                handler.handleNewConnection(socket.accept());
             } catch (IOException e) {
-
+                throw new RuntimeException(
+                        e); // i want to test to see what leads to this then fix // todo
             }
         }
     }
