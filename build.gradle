@@ -9,7 +9,7 @@ tasks.register('jarClient', Jar) {
     archiveBaseName = 'client'
     from sourceSets.main.output
     manifest {
-        attributes 'Main-Class': 'uk.wwws.apps.Client'
+        attributes 'Main-Class': 'uk.wwws.apps.ClientApp'
     }
 }
 
@@ -17,7 +17,7 @@ tasks.register('jarServer', Jar) {
     archiveBaseName = 'server'
     from sourceSets.main.output
     manifest {
-        attributes 'Main-Class': 'uk.wwws.apps.Server'
+        attributes 'Main-Class': 'uk.wwws.apps.ServerApp'
     }
 }
 
@@ -25,7 +25,7 @@ tasks.register('jarAI', Jar) {
     archiveBaseName = 'ai'
     from sourceSets.main.output
     manifest {
-        attributes 'Main-Class': 'uk.wwws.apps.AI'
+        attributes 'Main-Class': 'uk.wwws.apps.AIApp'
     }
 }
 
@@ -36,6 +36,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.jetbrains:annotations:15.0'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
