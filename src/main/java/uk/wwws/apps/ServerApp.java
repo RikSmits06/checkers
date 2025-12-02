@@ -11,7 +11,7 @@ import uk.wwws.net.Connection;
 import uk.wwws.net.ConnectionReceiver;
 import uk.wwws.net.ConnectionSender;
 import uk.wwws.net.threads.*;
-import uk.wwws.tui.Action;
+import uk.wwws.tui.CommandAction;
 
 public class ServerApp extends App
         implements ConnectionReceiver, ConnectionDataHandler, NewConnectionHandler {
@@ -34,7 +34,7 @@ public class ServerApp extends App
     }
 
     @Override
-    protected void handleAction(@Nullable Action action) {
+    protected void handleAction(@Nullable CommandAction action) {
         switch (action) {
             case START_SERVER -> handleStartServer();
             case STOP_SERVER -> stopServer();

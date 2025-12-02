@@ -8,7 +8,6 @@ import uk.wwws.game.Player;
 
 public class HumanPlayer extends AbstractPlayer implements Player {
     public HumanPlayer() {
-        super();
     }
 
     @Override

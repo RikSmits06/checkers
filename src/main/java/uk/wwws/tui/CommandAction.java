@@ -1,6 +1,6 @@
 package uk.wwws.tui;
 
-public enum Action {
+public enum CommandAction {
     CONNECT,
     DISCONNECT,
     QUIT,

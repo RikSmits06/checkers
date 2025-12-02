@@ -10,6 +10,7 @@ import uk.wwws.net.threads.ConnectionDataHandler;
 import uk.wwws.net.threads.ServerConnectionThread;
 import uk.wwws.net.threads.ServerThread;
 import uk.wwws.tui.Action;
+import uk.wwws.tui.CommandAction;
 
 public class AIApp extends App implements ConnectionSender, ConnectionDataHandler {
     private AIPlayer player;
@@ -35,7 +36,7 @@ public class AIApp extends App implements ConnectionSender, ConnectionDataHandle
     }
 
     @Override
-    protected void handleAction(@Nullable Action action) {
+    protected void handleAction(@Nullable CommandAction action) {
         switch (action) {
             case null, default -> System.out.println(
                     "Invalid command or wrong argument usage. Type help to get command list");

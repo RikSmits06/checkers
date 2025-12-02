@@ -2,7 +2,7 @@ package uk.wwws;
 
 import org.jetbrains.annotations.Nullable;
 import uk.wwws.game.CheckersGame;
-import uk.wwws.tui.Action;
+import uk.wwws.tui.CommandAction;
 import uk.wwws.tui.TUI;
 
 abstract public class App extends TUI {
@@ -15,11 +15,11 @@ abstract public class App extends TUI {
     protected final void run() {
         boolean stop = false;
         while (!stop) {
-            Action action = getNextAction();
-            if (action == Action.QUIT) stop = true;
+            CommandAction action = getNextAction();
+            if (action == CommandAction.QUIT) stop = true;
             handleAction(action);
         }
     }
 
-    protected abstract void handleAction(@Nullable Action action);
+    protected abstract void handleAction(@Nullable CommandAction action);
 }

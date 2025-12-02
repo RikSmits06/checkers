@@ -10,7 +10,7 @@ import uk.wwws.net.exceptions.FailedToConnectException;
 import uk.wwws.net.threads.ConnectionDataHandler;
 import uk.wwws.net.threads.ServerConnectionThread;
 import uk.wwws.net.threads.ServerThread;
-import uk.wwws.tui.Action;
+import uk.wwws.tui.CommandAction;
 
 public class ClientApp extends App implements ConnectionSender, ConnectionDataHandler {
     private HumanPlayer player;
@@ -36,7 +36,7 @@ public class ClientApp extends App implements ConnectionSender, ConnectionDataHa
     }
 
     @Override
-    protected void handleAction(@Nullable Action action) {
+    protected void handleAction(@Nullable CommandAction action) {
         switch (action) {
             case CONNECT -> handleConnect();
             case null, default -> System.out.println(

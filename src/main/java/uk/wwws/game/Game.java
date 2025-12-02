@@ -1,6 +1,8 @@
 package uk.wwws.game;
 
+import java.util.HashSet;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public interface Game {
     boolean isGameOver();
@@ -9,9 +11,9 @@ public interface Game {
 
     Player getWinner();
 
-    List<? extends Move> getValidMoves();
+    HashSet<? extends Move> getValidMoves();
 
-    boolean isValidMove(Move move);
+    boolean isValidMove(@NotNull Move move);
 
-    void doMove(Move move);
+    void doMove(@NotNull Move move);
 }

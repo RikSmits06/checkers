@@ -13,9 +13,9 @@ public class TUI {
         scanner = new Scanner(System.in);
     }
 
-    protected @Nullable Action getNextAction() {
+    protected @Nullable CommandAction getNextAction() {
         try {
-            return Action.valueOf(scanner.next().toUpperCase());
+            return CommandAction.valueOf(scanner.next().toUpperCase());
         } catch (IllegalArgumentException | NoSuchElementException e) {
             return null;
         }
