@@ -17,10 +17,11 @@ public class Connection {
     public Connection(@NotNull Socket socket) throws FailedToCreateStreamsException {
         this.host = socket.getInetAddress().getHostName();
         this.port = socket.getPort();
+        this.socket = socket;
 
         try {
             assignDataStreams();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new FailedToCreateStreamsException("Failed to create data streams");
         }
     }
@@ -32,7 +33,7 @@ public class Connection {
 
         try {
             connect();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new FailedToConnectException(host, port);
         }
     }
