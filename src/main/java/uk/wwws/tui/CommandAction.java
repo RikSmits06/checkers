@@ -9,5 +9,6 @@ public enum CommandAction {
     HELP,
     BOARD,
     START_SERVER,
-    STOP_SERVER
+    STOP_SERVER,
+    STATE
 }

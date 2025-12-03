@@ -16,7 +16,6 @@ import uk.wwws.tui.CommandAction;
 public class ClientApp extends App implements ConnectionSender, ConnectionDataHandler {
     private HumanPlayer player;
     private ServerConnectionThread connectionThread;
-    private Connection connection;
     private CheckersGame game;
 
     private static ClientApp instance;
@@ -49,21 +48,34 @@ public class ClientApp extends App implements ConnectionSender, ConnectionDataHa
     }
 
     private void handleMove() {
-        String test = getNextStringArg();
-        System.out.println(test);
-        connection.write(getNextStringArg());
+        if (connectionThread == null) {
+            System.out.println("You need to be connected to send moves");
+            return;
+        }
+
+        if (game == null) {
+            System.out.println("You need to be in game to send moves");
+        }
+
+        String move = getNextStringArg();
+        System.out.println("Sending new move: " + move);
+        connectionThread.getConnection().write(move);
     }
 
     private void handleConnect() {
+
         String host = getNextStringArg();
         Integer port = getNextIntArg();
+
+        System.out.println("Connecting to: " + host + ":" + port);
 
         if (host == null || port == null) {
             System.out.println("Invalid usage. Use: connect <host> <port>");
             return;
         }
 
-        System.out.println(host + port);
+        Connection connection;
+
         try {
             connection = new Connection(host, port);
         } catch (FailedToConnectException e) {
@@ -73,11 +85,18 @@ public class ClientApp extends App implements ConnectionSender, ConnectionDataHa
 
         connectionThread = new ServerConnectionThread(connection, this);
         connectionThread.start();
+
+        System.out.println("Created new connection");
     }
 
     @Override
-    public boolean handleData(@NotNull String data, @NotNull Connection c) {
-        System.out.println(data);
+    public boolean handleData(@Nullable String data, @NotNull Connection c) {
+        if (data == null) {
+            connectionThread.interrupt();
+            connectionThread = null;
+        }
+
+        System.out.println("Received new data: " + data);
         return true;
     }
 }

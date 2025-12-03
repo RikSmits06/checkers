@@ -24,6 +24,7 @@ public class ConnectedClientThread extends Thread {
 
     @Override
     public void interrupt() {
+        System.out.println("Interrupting client thread");
         super.interrupt();
         try {
             this.player.getConnection().disconnect();
@@ -33,8 +34,7 @@ public class ConnectedClientThread extends Thread {
     }
 
     public void run() {
-        System.out.println("test");
-
+        System.out.println("Created new connected client thread");
         super.run();
 
         String inputLine;
@@ -46,9 +46,11 @@ public class ConnectedClientThread extends Thread {
                 break;
             }
 
-            if (!handler.handleData(inputLine, this.player.getConnection())) break;
+            if (!handler.handleData(inputLine, this.player.getConnection())) {
+                break;
+            }
         }
 
-        System.out.println("test");
+        handler.handleData(null, this.player.getConnection());
     }
 }

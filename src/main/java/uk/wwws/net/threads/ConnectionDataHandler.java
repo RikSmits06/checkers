@@ -1,6 +1,7 @@
 package uk.wwws.net.threads;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.wwws.net.Connection;
 
 public interface ConnectionDataHandler {
@@ -11,5 +12,5 @@ public interface ConnectionDataHandler {
      * @param c
      * @return whether the handler wants to continue further handling (false = should exit)
      */
-    boolean handleData(@NotNull String data, @NotNull Connection c);
+    boolean handleData(@Nullable String data, @NotNull Connection c);
 }

@@ -45,7 +45,7 @@ public class AIApp extends App implements ConnectionSender, ConnectionDataHandle
     }
 
     @Override
-    public boolean handleData(@NotNull String data, @NotNull Connection c) {
+    public boolean handleData(@Nullable String data, @NotNull Connection c) {
         return false;
     }
 }

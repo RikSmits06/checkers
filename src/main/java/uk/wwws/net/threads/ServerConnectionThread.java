@@ -16,7 +16,13 @@ public class ServerConnectionThread extends Thread {
         this.handler = handler;
     }
 
+    public @NotNull Connection getConnection() {
+        return connection;
+    }
+
     public void run() {
+        System.out.println("Started new server connection");
+
         super.run();
 
         String inputLine;
@@ -30,5 +36,7 @@ public class ServerConnectionThread extends Thread {
 
             if (!handler.handleData(inputLine, connection)) break;
         }
+
+        handler.handleData(null, connection);
     }
 }

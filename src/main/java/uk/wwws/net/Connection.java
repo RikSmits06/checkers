@@ -2,6 +2,7 @@ package uk.wwws.net;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import uk.wwws.net.exceptions.FailedToConnectException;
 import uk.wwws.net.exceptions.FailedToCreateStreamsException;
@@ -10,8 +11,9 @@ public class Connection {
     private Socket socket;
     private @NotNull String host;
     private int port;
-    private PrintWriter out;
+    private OutputStreamWriter out;
     private BufferedReader in;
+    private UUID id = UUID.randomUUID();
 
     // for client to connect to said socket
     public Connection(@NotNull Socket socket) throws FailedToCreateStreamsException {
@@ -44,12 +46,18 @@ public class Connection {
     }
 
     private void assignDataStreams() throws IOException {
-        out = new PrintWriter(socket.getOutputStream(), true);
+        out = new OutputStreamWriter(socket.getOutputStream());
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
     public void write(@NotNull String data) {
-        out.write(data);
+        System.out.println("Writting: " + data);
+        try {
+            out.write(data + "\n");
+            out.flush();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public @NotNull String read() throws IOException {
@@ -62,5 +70,14 @@ public class Connection {
 
     public Socket getSocket() {
         return socket;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Connection c) {
+            return c.id == this.id;
+        }
+
+        return false;
     }
 }

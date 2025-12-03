@@ -42,9 +42,15 @@ public class ServerApp extends App
         switch (action) {
             case START_SERVER -> handleStartServer();
             case STOP_SERVER -> stopServer();
+            case STATE -> displayState();
             case null, default -> System.out.println(
                     "Invalid command or wrong argument usage. Type help to get command list");
         }
+    }
+
+    private void displayState() {
+        System.out.println("Size of connections: " + connections.size());
+        System.out.println("Queue size: " + queue.size());
     }
 
     private void handleStartServer() {
@@ -62,6 +68,7 @@ public class ServerApp extends App
     public ServerThread spawnServer(int port) {
         ServerThread newServerThread = new ServerThread(port, this);
         newServerThread.start();
+        System.out.println("Spawned new server");
         return newServerThread;
     }
 
@@ -71,6 +78,7 @@ public class ServerApp extends App
         ConnectedClientThread client = new ConnectedClientThread(new ConnectedPlayer(new Connection(socket)), this);
         connections.add(client);
         client.start();
+        client.getPlayer().getConnection().write("HI");
     }
 
     private @Nullable ConnectedClientThread getConnectedPlayer(@NotNull Connection c) {
@@ -88,9 +96,18 @@ public class ServerApp extends App
     }
 
     @Override
-    public boolean handleData(@NotNull String data, @NotNull Connection c) {
+    public boolean handleData(@Nullable String data, @NotNull Connection c) {
+        if (data == null) {
+            handleDisconnect(c);
+            return false;
+        }
+
+        Scanner input = new Scanner(data);
+
+        System.out.println("New data: " + data);
+
         try {
-            switch (PacketAction.valueOf(getNextStringArg())) {
+            switch (PacketAction.valueOf(input.next().toUpperCase())) {
                 case QUEUE -> handleQueue(c);
                 case MOVE -> handleMove(data, c);
                 case BYE, ERROR -> {
@@ -128,26 +145,37 @@ public class ServerApp extends App
     }
 
     private void handleDisconnect(@NotNull Connection c) {
+        System.out.println("Client trying to disconnect");
         if (connectionIsNotAThread(c)) {
             return;
         }
 
-        ConnectedPlayer player = getConnectedPlayer(c).getPlayer();
+        ConnectedClientThread clientThread = getConnectedPlayer(c);
+        ConnectedPlayer player = clientThread.getPlayer();
         if (player.getGame() != null) {
             for (Player otherPlayer : player.getGame().getPlayers()) {
                 handleGameEnd(otherPlayer);
             }
         }
 
-        getConnectedPlayer(c).interrupt();
+        clientThread.interrupt();
+        connections.remove(clientThread);
+        queue.remove(player);
+        System.out.println("Client disconnected");
     }
 
     private void handleMove(@NotNull String data, @NotNull Connection c) {
-        Integer fromIndex = getNextIntArg();
-        Integer toIndex = getNextIntArg();
+        System.out.println("Recieved move data: " + data);
+        Scanner input = new Scanner(data);
 
-        if (fromIndex == null || toIndex == null) {
-            System.out.println("Invalid move packet: " + fromIndex + " " + toIndex);
+        int fromIndex;
+        int toIndex;
+
+        try {
+            fromIndex = input.nextInt();
+            toIndex = input.nextInt();
+        } catch (NoSuchElementException | IllegalStateException e) {
+            System.out.println("Invalid move packet: " + data);
             c.write("ERROR");
             return;
         }
@@ -179,7 +207,9 @@ public class ServerApp extends App
             Player player1 = queue.poll();
             Player player2 = queue.poll();
             game.addPlayer(player1, Checker.WHITE);
-            game.addPlayer(player2, Checker.WHITE);
+            game.addPlayer(player2, Checker.BLACK);
+
+            checkQueue();
         }
     }
 
@@ -190,5 +220,8 @@ public class ServerApp extends App
         }
 
         serverThread.interrupt();
+        serverThread = null;
+
+        System.out.println("Stopped server");
     }
 }
