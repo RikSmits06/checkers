@@ -1,6 +1,8 @@
 package uk.wwws.game;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.wwws.game.exceptions.InvalidMoveException;
@@ -9,8 +11,8 @@ import uk.wwws.game.moves.CheckersMoveGenerator;
 import uk.wwws.game.moves.Move;
 
 public class CheckersGame implements Game {
-    private Board board;
-    private HashMap<Checker, Player> players = new HashMap<>();
+    private final Board board;
+    private final HashMap<Checker, Player> players = new HashMap<>();
     private Checker turn;
 
     public CheckersGame() {
@@ -76,9 +78,11 @@ public class CheckersGame implements Game {
     }
 
     private void resolveCapture(@NotNull CheckersMove move) {
-        board.setField(board.getRow(move.startIndex()) + ( board.getRow(move.endIndex()) - board.getRow(move.startIndex())) / 2,
-                       board.getCol(move.startIndex()) + (board.getCol(move.endIndex()) - board.getCol(move.startIndex())) / 2,
-                       Checker.EMPTY);
+        board.setField(board.getRow(move.startIndex()) +
+                               (board.getRow(move.endIndex()) - board.getRow(move.startIndex())) /
+                                       2, board.getCol(move.startIndex()) +
+                               (board.getCol(move.endIndex()) - board.getCol(move.startIndex())) /
+                                       2, Checker.EMPTY);
     }
 
     private void resolveMove(@NotNull CheckersMove move) {

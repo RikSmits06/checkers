@@ -9,8 +9,8 @@ import uk.wwws.net.Connection;
  * Client side therad which handles incomming communication from server
  */
 public class ServerConnectionThread extends Thread {
-    private ConnectionDataHandler handler;
-    private @NotNull Connection connection;
+    private final ConnectionDataHandler handler;
+    private final @NotNull Connection connection;
 
     public ServerConnectionThread(@NotNull Connection c, ConnectionDataHandler handler) {
         this.connection = c;
@@ -35,7 +35,9 @@ public class ServerConnectionThread extends Thread {
                 break;
             }
 
-            if (handler.handleData(inputLine, connection) == ErrorType.FATAL) break;
+            if (handler.handleData(inputLine, connection) == ErrorType.FATAL) {
+                break;
+            }
         }
 
         handler.handleData(null, connection);

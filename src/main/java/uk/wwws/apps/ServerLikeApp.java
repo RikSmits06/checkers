@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 import uk.wwws.ErrorType;
 import uk.wwws.game.Checker;
 import uk.wwws.game.CheckersGame;
-import uk.wwws.game.moves.CheckersMove;
 import uk.wwws.game.Player;
+import uk.wwws.game.moves.CheckersMove;
 import uk.wwws.game.players.ConnectedPlayer;
 import uk.wwws.net.Connection;
 import uk.wwws.net.ConnectionReceiver;
@@ -20,8 +20,8 @@ import uk.wwws.net.threads.NewConnectionHandler;
 import uk.wwws.net.threads.ServerThread;
 import uk.wwws.ui.CommandAction;
 
-public abstract class ServerLikeApp extends App implements ConnectionReceiver,
-        ConnectionDataHandler, NewConnectionHandler {
+public abstract class ServerLikeApp extends App
+        implements ConnectionReceiver, ConnectionDataHandler, NewConnectionHandler {
     HashSet<ConnectedClientThread> connections = new HashSet<>();
     Queue<ConnectedPlayer> queue = new LinkedList<>();
 

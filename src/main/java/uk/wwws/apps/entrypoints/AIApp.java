@@ -55,7 +55,7 @@ public class AIApp extends ClientLikeApp implements ConnectionSender, Connection
         }
 
         if (game.getTurn() == player) {
-            try{
+            try {
                 Thread.sleep(100);
             } catch (Exception e) {
             }

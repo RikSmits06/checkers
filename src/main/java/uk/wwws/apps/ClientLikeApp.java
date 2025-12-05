@@ -6,7 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.wwws.ErrorType;
 import uk.wwws.apps.exceptions.ServerErrorException;
-import uk.wwws.game.*;
+import uk.wwws.game.Checker;
+import uk.wwws.game.CheckersGame;
+import uk.wwws.game.Player;
 import uk.wwws.game.moves.CheckersMove;
 import uk.wwws.game.moves.Move;
 import uk.wwws.net.Connection;
@@ -173,7 +175,8 @@ public abstract class ClientLikeApp extends App implements ConnectionSender, Con
     }
 
     protected void sendMove(@NotNull CheckersMove move) {
-        connectionThread.getConnection().write(PacketAction.MOVE, move.startIndex() + " " + move.endIndex());
+        connectionThread.getConnection()
+                .write(PacketAction.MOVE, move.startIndex() + " " + move.endIndex());
     }
 
     protected void handleConnect() {

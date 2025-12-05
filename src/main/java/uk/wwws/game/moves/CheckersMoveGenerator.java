@@ -37,12 +37,13 @@ public class CheckersMoveGenerator implements MoveGenerator {
     }
 
     private void generateMovesForPiece(@NotNull Board board, int index,
-                                              @NotNull HashSet<Move> legalMoves) {
+                                       @NotNull HashSet<Move> legalMoves) {
         Checker piece = board.getField(index);
 
         Bitboard allPieces = new Bitboard(board.getCheckers(), null, Board.DIM);
         MoveBitboard moveBitboard =
-                new MoveBitboard(Board.DIM).reposition(board.getRow(index), board.getCol(index));
+                (MoveBitboard) new MoveBitboard(Board.DIM).reposition(board.getRow(index),
+                                                                      board.getCol(index));
 
         accountForSide(piece, moveBitboard);
 
@@ -52,25 +53,44 @@ public class CheckersMoveGenerator implements MoveGenerator {
     }
 
     private void generateCapturesForPiece(@NotNull Board board, int index,
-                                         @NotNull HashSet<Move> legalMoves) {
+                                          @NotNull HashSet<Move> legalMoves) {
         Checker piece = board.getField(index);
 
         Bitboard allPieces = new Bitboard(board.getCheckers(), null, Board.DIM);
         Bitboard oppPieces = new Bitboard(board.getCheckers(), piece.other(), Board.DIM);
-        CaptureBitboard captures = new CaptureBitboard(Board.DIM, 5).reposition(board.getRow(index),
-                                                                                board.getCol(
-                                                                                        index));
-        accountForSide(piece, captures);
+        Bitboard captures = new CaptureBitboard(Board.DIM, 5).reposition(board.getRow(index),
+                                                                         board.getCol(index))
+                .and(allPieces.not());
+        PositionedBitboard pCaptures = new PositionedBitboard(Board.DIM, 0, captures);
+        accountForSide(piece, pCaptures);
 
-        MoveBitboard move =
+        PositionedBitboard move =
                 new MoveBitboard(Board.DIM).reposition(board.getRow(index), board.getCol(index));
+
         accountForSide(piece, move);
 
         Bitboard capturablePieces = oppPieces.and(move);
+
+        // todo inneficient should be reaplced
+        // at max 16 internal loop executions
+        for (Integer emptyCaptureSquare : captures.getOnIndexes()) {
+
+            for (Integer capturablePieceIndex : capturablePieces.getOnIndexes()) {
+
+                Bitboard piecePos = new Bitboard(Board.DIM);
+                piecePos.set(index);
+                piecePos.set(capturablePieceIndex);
+
+                Bitboard ray = new CaptureBitboard(Board.DIM, 5).reposition(
+                        board.getRow(emptyCaptureSquare), board.getCol(emptyCaptureSquare));
+                if (ray.and(piecePos).getOnIndexes().size() == 2) {
+                    legalMoves.add(new CheckersMove(index, emptyCaptureSquare));
+                }
+            }
+        }
     }
 
-    private @NotNull PositionedBitboard accountForSide(@NotNull Checker piece,
-                                                    @NotNull PositionedBitboard bitboard) {
+    private void accountForSide(@NotNull Checker piece, @NotNull PositionedBitboard bitboard) {
         if (!piece.isQueen()) {
             if (piece.sameColor(Checker.WHITE)) {
                 bitboard.from(bitboard.forward());
@@ -78,8 +98,6 @@ public class CheckersMoveGenerator implements MoveGenerator {
                 bitboard.from(bitboard.backward());
             }
         }
-
-        return bitboard;
     }
 
     static void main() {

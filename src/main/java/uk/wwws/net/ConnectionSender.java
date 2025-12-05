@@ -1,8 +1,5 @@
 package uk.wwws.net;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.wwws.net.exceptions.FailedToConnectException;

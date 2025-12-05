@@ -1,7 +1,5 @@
 package uk.wwws.game.bitboards;
 
-import javax.swing.text.Position;
-import org.jetbrains.annotations.NotNull;
 import uk.wwws.game.Board;
 
 public class MoveBitboard extends PositionedBitboard {

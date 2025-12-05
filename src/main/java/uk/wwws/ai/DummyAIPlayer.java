@@ -3,7 +3,7 @@ package uk.wwws.ai;
 import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import uk.wwws.game.*;
+import uk.wwws.game.CheckersGame;
 import uk.wwws.game.moves.Move;
 import uk.wwws.game.players.AIPlayer;
 

@@ -1,14 +1,9 @@
 package uk.wwws.game;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public enum Checker {
-    BLACK,
-    WHITE,
-    WHITE_QUEEN,
-    BLACK_QUEEN,
-    EMPTY;
+    BLACK, WHITE, WHITE_QUEEN, BLACK_QUEEN, EMPTY;
 
     public Checker other() {
         if (this == BLACK) {
@@ -21,7 +16,9 @@ public enum Checker {
     }
 
     public Checker queen() {
-        if (this == BLACK_QUEEN || this == WHITE_QUEEN) return this;
+        if (this == BLACK_QUEEN || this == WHITE_QUEEN) {
+            return this;
+        }
 
         if (this == BLACK) {
             return BLACK_QUEEN;

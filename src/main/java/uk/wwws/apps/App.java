@@ -10,7 +10,9 @@ abstract public class App extends TUI {
         boolean stop = false;
         while (!stop) {
             CommandAction action = getNextAction();
-            if (action == CommandAction.QUIT) stop = true;
+            if (action == CommandAction.QUIT) {
+                stop = true;
+            }
             handleAction(action);
         }
     }

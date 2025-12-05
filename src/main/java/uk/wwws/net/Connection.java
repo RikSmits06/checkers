@@ -1,6 +1,9 @@
 package uk.wwws.net;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
@@ -9,11 +12,11 @@ import uk.wwws.net.exceptions.FailedToCreateStreamsException;
 
 public class Connection {
     private Socket socket;
-    private @NotNull String host;
-    private int port;
+    private final @NotNull String host;
+    private final int port;
     private OutputStreamWriter out;
     private BufferedReader in;
-    private UUID id = UUID.randomUUID();
+    private final UUID id = UUID.randomUUID();
 
     // for client to connect to said socket
     public Connection(@NotNull Socket socket) throws FailedToCreateStreamsException {

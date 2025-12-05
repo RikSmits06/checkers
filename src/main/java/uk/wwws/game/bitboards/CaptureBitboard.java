@@ -1,8 +1,5 @@
 package uk.wwws.game.bitboards;
 
-import org.jetbrains.annotations.NotNull;
-import uk.wwws.game.Board;
-
 public class CaptureBitboard extends PositionedBitboard implements Directional {
     public CaptureBitboard(int boardDim, int captureRange) {
         assert captureRange % 2 == 1;
