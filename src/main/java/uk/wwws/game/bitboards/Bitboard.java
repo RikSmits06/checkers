@@ -23,11 +23,17 @@ public class Bitboard extends BitSet {
     /*@
         ensures this.cardinality() == \old(this.cardinality());
     */
-    public Bitboard(BitSet bitSet, int boardDim) {
+    public Bitboard(@NotNull BitSet bitSet, int boardDim) {
         this(boardDim);
-        for (int i = 0; i < bitSet.size(); i++) {
-            if (bitSet.get(i)) {
+        from(bitSet);
+    }
+
+    public void from(@NotNull BitSet board) {
+        for (int i = 0; i < board.size(); i++) {
+            if (board.get(i)) {
                 set(i);
+            } else {
+                clear(i);
             }
         }
     }
@@ -63,62 +69,50 @@ public class Bitboard extends BitSet {
         return getMaskIndexes(board, false);
     }
 
-    private @NotNull Bitboard shiftL() {
-        Bitboard bitboard = new Bitboard();
-
-        for (int i = 0; i < size(); i++) {
-            if (get(i + 1)) {
-                bitboard.set(i);
-            }
-        }
-
-        return bitboard;
-    }
-
-    private @NotNull Bitboard shiftR() {
+    protected @NotNull Bitboard shiftH(int n) {
         Bitboard bitboard = new Bitboard(boardDim);
 
-        for (int i = 1; i < size() - 1; i++) {
-            if (get(i - 1)) {
-                bitboard.set(i);
+        for (int i = 0; i < size(); i++) {
+            // fucking modular shitfuckery
+            // todo simplify
+            if ((i+n) % boardDim == i % boardDim + n % boardDim && i + n >= 0 && get(i)) {
+                bitboard.set(i + n);
             }
         }
 
         return bitboard;
     }
 
-    private @NotNull Bitboard shiftH(int n) {
-        Bitboard bitboard = new Bitboard(this);
+    protected @NotNull Bitboard shiftV(int n) {
+        Bitboard bitboard = new Bitboard(boardDim);
 
-        for (int i = 0; i < Math.abs(n); i++) {
-            if (n > 0) {
-                bitboard = bitboard.shiftR();
-            } else {
-                bitboard = bitboard.shiftL();
+        for (int i = 0; i < size(); i++) {
+            if (i + n < size() && (i + n*boardDim) >= 0 && get(i)) {
+                bitboard.set(i + n*boardDim);
             }
         }
 
         return bitboard;
     }
 
-    private @NotNull Bitboard shiftV(int n) {
-        Bitboard bitboard = new Bitboard(this, boardDim);
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < Math.abs(n); i++) {
-            if (n > 0) {
-                bitboard = bitboard.shiftH(Board.DIM);
-            } else {
-                bitboard = bitboard.shiftH(-Board.DIM);
+        for (int i = 0; i < boardDim; i++) {
+            for (int j = 0; j < boardDim; j++) {
+                sb.append(get(i * boardDim + j) ? 1 : 0).append(" ");
             }
+            sb.append("\n");
         }
 
-        return bitboard;
+        return sb.toString();
     }
 
     static void main() {
         Bitboard bitboard = new Bitboard(8);
         bitboard.set(0);
 
-        System.out.println(bitboard.shiftV(4).shiftV(-4));
+        System.out.println(bitboard.shiftV(9));
     }
 }
