@@ -48,10 +48,10 @@ public class Bitboard extends BitSet {
         }
     }
 
-    public @NotNull Set<Integer> getMaskIndexes(@NotNull Bitboard board, boolean mask) {
+    public @NotNull Set<Integer> getMaskIndexes(boolean mask) {
         Set<Integer> indexes = new HashSet<>();
 
-        for (int i = 0; i < board.length(); i++) {
+        for (int i = 0; i < size(); i++) {
             if (get(i) == mask) {
                 indexes.add(i);
             }
@@ -60,13 +60,40 @@ public class Bitboard extends BitSet {
         return indexes;
     }
 
+    public void set(boolean value, int row, int col) {
+        if (row < 0 || col < 0 || col > boardDim || row * boardDim + col > boardDim * boardDim) {
+            return;
+        }
 
-    public @NotNull Set<Integer> getOnIndexes(@NotNull Bitboard board) {
-        return getMaskIndexes(board, true);
+        super.set(row * boardDim + col, value);
     }
 
-    public @NotNull Set<Integer> getOffIndexes(@NotNull Bitboard board) {
-        return getMaskIndexes(board, false);
+    public @NotNull Set<Integer> getOnIndexes() {
+        return getMaskIndexes(true);
+    }
+
+    public @NotNull Set<Integer> getOffIndexes() {
+        return getMaskIndexes(false);
+    }
+
+    public @NotNull Bitboard and(@NotNull Bitboard board) {
+        Bitboard bitboard = new Bitboard(boardDim);
+
+        for (int i = 0; i < size(); i++) {
+            bitboard.set(i, board.get(i) && get(i));
+        }
+
+        return bitboard;
+    }
+
+    public @NotNull Bitboard not() {
+        Bitboard bitboard = new Bitboard(boardDim);
+
+        for (int i = 0; i < size(); i++) {
+            bitboard.set(i, !get(i));
+        }
+
+        return bitboard;
     }
 
     protected @NotNull Bitboard shiftH(int n) {
@@ -75,7 +102,7 @@ public class Bitboard extends BitSet {
         for (int i = 0; i < size(); i++) {
             // fucking modular shitfuckery
             // todo simplify
-            if ((i+n) % boardDim == i % boardDim + n % boardDim && i + n >= 0 && get(i)) {
+            if ((i + n) % boardDim == i % boardDim + n % boardDim && i + n >= 0 && get(i)) {
                 bitboard.set(i + n);
             }
         }
@@ -87,8 +114,8 @@ public class Bitboard extends BitSet {
         Bitboard bitboard = new Bitboard(boardDim);
 
         for (int i = 0; i < size(); i++) {
-            if (i + n < size() && (i + n*boardDim) >= 0 && get(i)) {
-                bitboard.set(i + n*boardDim);
+            if (i + n < size() && (i + n * boardDim) >= 0 && get(i)) {
+                bitboard.set(i + n * boardDim);
             }
         }
 
@@ -111,8 +138,12 @@ public class Bitboard extends BitSet {
 
     static void main() {
         Bitboard bitboard = new Bitboard(8);
-        bitboard.set(0);
+        bitboard.set(43);
 
-        System.out.println(bitboard.shiftV(9));
+        Bitboard bitboard2 = new Bitboard(8);
+        bitboard2.set(32);
+
+        System.out.println(bitboard2);
+        System.out.println(bitboard.and(bitboard2));
     }
 }
