@@ -4,32 +4,28 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import org.jetbrains.annotations.Nullable;
 
-public class TUI extends UI {
+abstract public class TUI implements UI {
     Scanner scanner;
 
     protected TUI() {
         scanner = new Scanner(System.in);
     }
 
-    protected @Nullable CommandAction getNextAction() {
-        try {
-            return CommandAction.valueOf(scanner.next().toUpperCase());
-        } catch (IllegalArgumentException | NoSuchElementException e) {
-            return null;
+    public void run() {
+        boolean stop = false;
+        while (!stop) {
+            String nextAction = getNextAction();
+            if (nextAction != null && nextAction.startsWith(CommandAction.QUIT.name())) {
+                stop = true;
+                continue;
+            }
+            handleAction(nextAction);
         }
     }
 
-    protected @Nullable String getNextStringArg() {
+    protected @Nullable String getNextAction() {
         try {
-            return scanner.next();
-        } catch (IllegalArgumentException | NoSuchElementException e) {
-            return null;
-        }
-    }
-
-    protected @Nullable Integer getNextIntArg() {
-        try {
-            return scanner.nextInt();
+            return scanner.nextLine();
         } catch (IllegalArgumentException | NoSuchElementException e) {
             return null;
         }

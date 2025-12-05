@@ -19,16 +19,17 @@ import uk.wwws.net.threads.ConnectionDataHandler;
 import uk.wwws.net.threads.NewConnectionHandler;
 import uk.wwws.net.threads.ServerThread;
 import uk.wwws.ui.CommandAction;
+import uk.wwws.ui.TUI;
+import uk.wwws.ui.UI;
 
-public abstract class ServerLikeApp extends App
+public abstract class ServerLikeApp extends TUI
         implements ConnectionReceiver, ConnectionDataHandler, NewConnectionHandler {
     HashSet<ConnectedClientThread> connections = new HashSet<>();
     Queue<ConnectedPlayer> queue = new LinkedList<>();
 
     private @Nullable ServerThread serverThread;
 
-    @Override
-    protected void handleAction(@Nullable CommandAction action) {
+    public void handleAction(@NotNull String data) {
         switch (action) {
             case START_SERVER -> handleStartServer();
             case STOP_SERVER -> stopServer();

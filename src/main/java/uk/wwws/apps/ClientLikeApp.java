@@ -17,9 +17,11 @@ import uk.wwws.net.PacketAction;
 import uk.wwws.net.exceptions.FailedToConnectException;
 import uk.wwws.net.threads.ConnectionDataHandler;
 import uk.wwws.net.threads.ServerConnectionThread;
-import uk.wwws.ui.CommandAction;
+import uk.wwws.ui.DataParser;
+import uk.wwws.ui.TUI;
+import uk.wwws.ui.UI;
 
-public abstract class ClientLikeApp extends App implements ConnectionSender, ConnectionDataHandler {
+public abstract class ClientLikeApp extends TUI implements ConnectionSender, ConnectionDataHandler {
     protected ServerConnectionThread connectionThread;
     protected CheckersGame game;
 
@@ -125,9 +127,10 @@ public abstract class ClientLikeApp extends App implements ConnectionSender, Con
         System.out.println(game);
     }
 
-    @Override
-    protected void handleAction(@Nullable CommandAction action) {
-        switch (action) {
+    public void handleAction(@Nullable String data) {
+
+
+        switch (data) {
             case CONNECT -> handleConnect();
             case DISCONNECT -> handleDisconnect();
             case STATE -> handleState();
