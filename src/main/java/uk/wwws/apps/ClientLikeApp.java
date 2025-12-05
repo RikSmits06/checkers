@@ -17,6 +17,7 @@ import uk.wwws.net.PacketAction;
 import uk.wwws.net.exceptions.FailedToConnectException;
 import uk.wwws.net.threads.ConnectionDataHandler;
 import uk.wwws.net.threads.ServerConnectionThread;
+import uk.wwws.ui.CommandAction;
 import uk.wwws.ui.DataParser;
 import uk.wwws.ui.TUI;
 import uk.wwws.ui.UI;
@@ -86,20 +87,22 @@ public abstract class ClientLikeApp extends TUI implements ConnectionSender, Con
     }
 
     protected void handleColorAssign(@NotNull Scanner input) {
-        String a = input.next();
-        Checker color = Checker.valueOf(a.toUpperCase());
+        String data = getNext(input);
+        if (data == null) {
+            System.out.println("Received wrong color assign, null");
+            return;
+        }
+
+        Checker color = Checker.valueOf(data.toUpperCase());
         game.addPlayer(this.player, color);
     }
 
-    public void handleReceiveMove(@Nullable Scanner input) {
-        int fromIndex;
-        int toIndex;
+    public void handleReceiveMove(@NotNull Scanner data) {
+        Integer fromIndex = getNextInt(data);
+        Integer toIndex = getNextInt(data);
 
-        try {
-            fromIndex = input.nextInt();
-            toIndex = input.nextInt();
-        } catch (NoSuchElementException | IllegalStateException | NullPointerException e) {
-            System.out.println("Invalid move packet: " + input);
+        if (fromIndex == null || toIndex == null) {
+            System.out.println("Invalid move: from: " + fromIndex + " to: " + toIndex);
             return;
         }
 
@@ -127,14 +130,12 @@ public abstract class ClientLikeApp extends TUI implements ConnectionSender, Con
         System.out.println(game);
     }
 
-    public void handleAction(@Nullable String data) {
-
-
-        switch (data) {
-            case CONNECT -> handleConnect();
+    public void handleAction(@Nullable CommandAction action, @NotNull Scanner data) {
+        switch (action) {
+            case CONNECT -> handleConnect(data);
             case DISCONNECT -> handleDisconnect();
             case STATE -> handleState();
-            case MOVE -> handleMove();
+            case MOVE -> handleMove(data);
             case QUEUE -> handleQueue();
             case null, default -> System.out.println(
                     "Invalid command or wrong argument usage. Type help to get command list");
@@ -150,7 +151,7 @@ public abstract class ClientLikeApp extends TUI implements ConnectionSender, Con
         connectionThread.getConnection().write(PacketAction.QUEUE);
     }
 
-    protected void handleMove() {
+    protected void handleMove(@NotNull Scanner data) {
         if (connectionThread == null) {
             System.out.println("You need to be connected to send moves");
             return;
@@ -166,8 +167,8 @@ public abstract class ClientLikeApp extends TUI implements ConnectionSender, Con
             // return;
         }
 
-        Integer from = getNextIntArg();
-        Integer to = getNextIntArg();
+        Integer from = getNextInt(data);
+        Integer to = getNextInt(data);
 
         if (from == null || to == null) {
             System.out.println("Incorrect usage. Use: move <fromindex> <toindex>");
@@ -182,9 +183,9 @@ public abstract class ClientLikeApp extends TUI implements ConnectionSender, Con
                 .write(PacketAction.MOVE, move.startIndex() + " " + move.endIndex());
     }
 
-    protected void handleConnect() {
-        String host = getNextStringArg();
-        Integer port = getNextIntArg();
+    protected void handleConnect(@NotNull Scanner data) {
+        String host = getNext(data);
+        Integer port = getNextInt(data);
 
         System.out.println("Connecting to: " + host + ":" + port);
 

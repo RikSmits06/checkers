@@ -29,9 +29,9 @@ public abstract class ServerLikeApp extends TUI
 
     private @Nullable ServerThread serverThread;
 
-    public void handleAction(@NotNull String data) {
+    public void handleAction(@Nullable CommandAction action, @NotNull Scanner data) {
         switch (action) {
-            case START_SERVER -> handleStartServer();
+            case START_SERVER -> handleStartServer(data);
             case STOP_SERVER -> stopServer();
             case STATE -> displayState();
             case null, default -> System.out.println(
@@ -44,8 +44,8 @@ public abstract class ServerLikeApp extends TUI
         System.out.println("Queue size: " + queue.size());
     }
 
-    private void handleStartServer() {
-        Integer port = getNextIntArg();
+    private void handleStartServer(@NotNull Scanner data) {
+        Integer port = getNextInt(data);
 
         if (port == null) {
             System.out.println("Incorrect usage, should be: start_server <port>");

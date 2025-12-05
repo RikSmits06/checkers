@@ -14,20 +14,12 @@ abstract public class TUI implements UI {
     public void run() {
         boolean stop = false;
         while (!stop) {
-            String nextAction = getNextAction();
-            if (nextAction != null && nextAction.startsWith(CommandAction.QUIT.name())) {
+            CommandAction nextAction = getNextCommandAction(scanner);
+            if (nextAction == CommandAction.QUIT) {
                 stop = true;
                 continue;
             }
-            handleAction(nextAction);
-        }
-    }
-
-    protected @Nullable String getNextAction() {
-        try {
-            return scanner.nextLine();
-        } catch (IllegalArgumentException | NoSuchElementException e) {
-            return null;
+            handleAction(nextAction, scanner);
         }
     }
 }

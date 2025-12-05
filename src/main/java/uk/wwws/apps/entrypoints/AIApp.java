@@ -41,7 +41,7 @@ public class AIApp extends ClientLikeApp implements ConnectionSender, Connection
     }
 
     @Override
-    public void handleReceiveMove(@Nullable Scanner input) {
+    public void handleReceiveMove(@NotNull Scanner input) {
         super.handleReceiveMove(input);
         sendBestMove();
     }

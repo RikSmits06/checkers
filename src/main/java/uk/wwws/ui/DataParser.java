@@ -6,25 +6,23 @@ import org.jetbrains.annotations.Nullable;
 import uk.wwws.net.PacketAction;
 
 public interface DataParser {
-    default @Nullable String getNext(@NotNull String data) {
-        Scanner s = new Scanner(data);
+    default @Nullable String getNext(@NotNull Scanner data) {
         try {
-            return s.next();
+            return data.next();
         } catch (Exception e) {
             return null;
         }
     }
 
-    default @Nullable Integer getNextInt(@NotNull String data) {
-        Scanner s = new Scanner(data);
+    default @Nullable Integer getNextInt(@NotNull Scanner data) {
         try {
-            return s.nextInt();
+            return data.nextInt();
         } catch (Exception e) {
             return null;
         }
     }
 
-    default @Nullable CommandAction getNextCommandAction(@NotNull String data) {
+    default @Nullable CommandAction getNextCommandAction(@NotNull Scanner data) {
         try {
             return CommandAction.valueOf(getNext(data).toUpperCase());
         } catch (Exception e) {
@@ -32,7 +30,7 @@ public interface DataParser {
         }
     }
 
-    default @Nullable PacketAction getNextPacketAction(@NotNull String data) {
+    default @Nullable PacketAction getNextPacketAction(@NotNull Scanner data) {
         try {
             return PacketAction.valueOf(getNext(data).toUpperCase());
         } catch (Exception e) {
