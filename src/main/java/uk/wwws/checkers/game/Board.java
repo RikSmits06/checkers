@@ -148,4 +148,8 @@ public class Board {
         return getField(index) == Checker.WHITE && getRow(index) == 0 ||
                 getField(index) == Checker.BLACK && getRow(index) == 7;
     }
+
+    public double getDistance(int row1, int col1, int row2, int col2) {
+        return Math.sqrt(Math.pow(row2 - row1, 2) + Math.pow(col2 - col1, 2));
+    }
 }

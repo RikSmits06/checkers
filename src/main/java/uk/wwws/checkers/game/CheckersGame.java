@@ -118,4 +118,12 @@ public class CheckersGame implements Game {
     public String toString() {
         return board.toString() + "\n" + players + "\n" + turn + "\n" + getValidMoves();
     }
+
+    public static void main(String[] args) {
+        CheckersGame g = new CheckersGame();
+        g.doMove(CheckersMoveGenerator.getInstance().generateMoves(g.getBoard(), g.turn).stream().findFirst().get());
+        System.out.println(g.board);
+        g.doMove(CheckersMoveGenerator.getInstance().generateMoves(g.getBoard(), g.turn).stream().findFirst().get());
+        System.out.println(g.board);
+    }
 }

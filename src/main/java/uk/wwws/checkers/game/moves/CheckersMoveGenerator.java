@@ -45,9 +45,9 @@ public class CheckersMoveGenerator implements MoveGenerator {
                 (MoveBitboard) new MoveBitboard(Board.DIM).reposition(board.getRow(index),
                                                                       board.getCol(index));
 
-        accountForSide(piece, moveBitboard);
+        Bitboard accountedForSide = accountForSide(piece, moveBitboard);
 
-        for (Integer onIndex : moveBitboard.and(allPieces.not()).getOnIndexes()) {
+        for (Integer onIndex : accountedForSide.and(allPieces.not()).getOnIndexes()) {
             legalMoves.add(new CheckersMove(index, onIndex));
         }
     }
@@ -58,49 +58,42 @@ public class CheckersMoveGenerator implements MoveGenerator {
 
         Bitboard allPieces = new Bitboard(board.getCheckers(), null, Board.DIM);
         Bitboard oppPieces = new Bitboard(board.getCheckers(), piece.other(), Board.DIM);
+
+
         Bitboard captures = new CaptureBitboard(Board.DIM, 5).reposition(board.getRow(index),
                                                                          board.getCol(index))
                 .and(allPieces.not());
-        PositionedBitboard pCaptures = new PositionedBitboard(Board.DIM, 0, captures);
+        PositionedBitboard pCaptures =
+                new PositionedBitboard(Board.DIM, 0, captures, board.getRow(index),
+                                       board.getCol(index));
+        Bitboard accountedCaptures = accountForSide(piece, pCaptures);
 
-        accountForSide(piece, pCaptures);
 
-        PositionedBitboard move =
-                new MoveBitboard(Board.DIM).reposition(board.getRow(index), board.getCol(index));
+        for (Integer emptyCaptureSquare : accountedCaptures.getOnIndexes()) {
+            int row1 = board.getRow(index);
+            int col1 = board.getCol(index);
+            int row2 = board.getRow(emptyCaptureSquare);
+            int col2 = board.getCol(emptyCaptureSquare);
 
-        accountForSide(piece, move);
-
-        Bitboard capturablePieces = oppPieces.and(move);
-
-        // todo inneficient should be reaplced
-        // at max 16 internal loop executions
-        for (Integer emptyCaptureSquare : captures.getOnIndexes()) {
-
-            for (Integer capturablePieceIndex : capturablePieces.getOnIndexes()) {
-
-                Bitboard piecePos = new Bitboard(Board.DIM);
-                piecePos.set(index);
-                piecePos.set(capturablePieceIndex);
-
-                Bitboard ray = new CaptureBitboard(Board.DIM, 5).reposition(
-                        board.getRow(emptyCaptureSquare), board.getCol(emptyCaptureSquare));
-                if (ray.and(piecePos).getOnIndexes().size() == 2) {
-                    legalMoves.add(new CheckersMove(index, emptyCaptureSquare));
-                }
+            int intersections = oppPieces.intersetDiagonalRay(row1, col1, row2, col2);
+            // there should only be one intersection which is the enemy piece.
+            if (intersections == 1 && board.getDistance(row1, col1, row2, col2) >= 2) {
+                legalMoves.add(new CheckersMove(index, emptyCaptureSquare));
             }
         }
     }
 
-    private void accountForSide(@NotNull Checker piece, @NotNull PositionedBitboard bitboard) {
+    private @NotNull Bitboard accountForSide(@NotNull Checker piece,
+                                             @NotNull PositionedBitboard bitboard) {
         if (piece.isQueen()) {
-            return;
+            return bitboard;
         }
 
         if (piece.sameColor(Checker.WHITE)) {
-            bitboard.from(bitboard.forward());
-        } else {
-            bitboard.from(bitboard.backward());
+            return bitboard.forward();
         }
+
+        return bitboard.backward();
     }
 
     static void main() {

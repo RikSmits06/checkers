@@ -116,9 +116,6 @@ public class GameScene extends StaticScene {
 
     private void addMoveHandler(@NotNull Node node, int row, int col) {
         node.setOnMouseClicked((MouseEvent _) -> {
-            System.out.println("clicked" + row + " " + col + " " + selectedId + " " +
-                                       gui.getApp().getGameState().getBoard().getField(row, col));
-
             if (gui.getApp().getGameState().getBoard().getField(row, col) != Checker.EMPTY) {
                 selectedId = gui.getApp().getGameState().getBoard().index(row, col);
                 if (perspective == Checker.BLACK) {
@@ -126,7 +123,6 @@ public class GameScene extends StaticScene {
                             gui.getApp().getGameState().getBoard().index(Board.DIM - row - 1, col);
                 }
 
-                System.out.println("New id: " + selectedId);
                 return;
             }
 

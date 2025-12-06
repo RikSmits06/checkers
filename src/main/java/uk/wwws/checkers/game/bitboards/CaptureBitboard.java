@@ -22,7 +22,7 @@ public class CaptureBitboard extends PositionedBitboard implements Directional {
         }
     }
 
-    static void main() {
+    public static void main(String[] args) {
         System.out.println(new CaptureBitboard(8, 5));
     }
 }

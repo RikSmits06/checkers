@@ -13,6 +13,15 @@ public class PositionedBitboard extends Bitboard implements Directional {
         from(bitboard);
     }
 
+    public PositionedBitboard(int boardDim, int offset, @NotNull Bitboard bitboard, int row, int col) {
+        this(boardDim, offset);
+
+        this.row = row;
+        this.col = col;
+
+        from(bitboard);
+    }
+
     public PositionedBitboard(int boardDim, int offset) {
         super(boardDim);
 
