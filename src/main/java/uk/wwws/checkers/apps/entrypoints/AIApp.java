@@ -47,28 +47,15 @@ public class AIApp extends ClientLikeApp implements ConnectionSender, Connection
     }
 
     @Override
-    public void handleReceiveMove(@NotNull Scanner input) {
-        super.handleReceiveMove(input);
-        sendBestMove();
-    }
-
-    @Override
-    public ErrorType handleData(@Nullable String data, @NotNull Connection c) {
-        ErrorType error = super.handleData(data, c);
-
-        if (error != ErrorType.NONE) {
-            return error;
-        }
-
+    protected void handleYourMove() {
+        super.handleYourMove();
         if (game.getTurn() == player) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(500);
             } catch (Exception e) {
             }
             sendBestMove();
         }
-
-        return ErrorType.NONE;
     }
 
     @Override

@@ -28,7 +28,7 @@ public class CheckersGame implements Game {
     //@ pure
     @Override
     public boolean isGameOver() {
-        return board.gameOver();
+        return getWinner() != null;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CheckersGame implements Game {
         }
 
         if (getValidMoves().isEmpty()) {
-            players.get(turn.other());
+            return players.get(turn.other());
         }
 
         return null;

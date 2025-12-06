@@ -58,7 +58,7 @@ public class CheckersMoveGenerator implements MoveGenerator {
 
         Bitboard allPieces = new Bitboard(board.getCheckers(), null, Board.DIM);
         Bitboard oppPieces = new Bitboard(board.getCheckers(), piece.other(), Board.DIM);
-
+        oppPieces.or(new Bitboard(board.getCheckers(), piece.other().queen(), Board.DIM));
 
         Bitboard captures = new CaptureBitboard(Board.DIM, 5).reposition(board.getRow(index),
                                                                          board.getCol(index))
