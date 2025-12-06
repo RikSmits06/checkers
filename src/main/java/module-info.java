@@ -17,4 +17,5 @@ module uk.wwws.checkers {
     exports uk.wwws.checkers.ui.scenes;
     exports uk.wwws.checkers.net.threads;
     exports uk.wwws.checkers.game;
+    exports uk.wwws.checkers.game.players;
 }

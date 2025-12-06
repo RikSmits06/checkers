@@ -26,6 +26,7 @@ tasks.register<JavaExec>("runClient") {
     group = "application"
     mainClass.set("uk.wwws.checkers.apps.entrypoints.launchers.ClientLauncher")
     classpath = sourceSets["main"].runtimeClasspath
+    standardInput = System.`in`;
 }
 
 tasks.register<JavaExec>("runServer") {
@@ -39,6 +40,7 @@ tasks.register<JavaExec>("runAI") {
     group = "application"
     mainClass.set("uk.wwws.checkers.apps.entrypoints.launchers.AILauncher")
     classpath = sourceSets["main"].runtimeClasspath
+    standardInput = System.`in`;
 }
 
 tasks.register<Jar>("jarClient") {

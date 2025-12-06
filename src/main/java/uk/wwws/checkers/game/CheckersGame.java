@@ -77,6 +77,11 @@ public class CheckersGame implements Game {
         this.turn = turn.other();
     }
 
+    @Override
+    public @NotNull Board getBoard() {
+        return board;
+    }
+
     private void resolveCapture(@NotNull CheckersMove move) {
         board.setField(board.getRow(move.startIndex()) +
                                (board.getRow(move.endIndex()) - board.getRow(move.startIndex())) /

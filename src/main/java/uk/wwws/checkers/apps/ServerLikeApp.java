@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import uk.wwws.checkers.ErrorType;
 import uk.wwws.checkers.game.Checker;
 import uk.wwws.checkers.game.CheckersGame;
+import uk.wwws.checkers.game.Game;
 import uk.wwws.checkers.game.Player;
 import uk.wwws.checkers.game.moves.CheckersMove;
 import uk.wwws.checkers.game.players.ConnectedPlayer;
@@ -265,5 +266,10 @@ public abstract class ServerLikeApp implements App, ConnectionReceiver, Connecti
             c.interrupt();
         });
         this.connections = new HashSet<>();
+    }
+
+    @Override
+    public @Nullable Game getGameState() {
+        return null;
     }
 }

@@ -13,6 +13,7 @@ import uk.wwws.checkers.net.Connection;
 import uk.wwws.checkers.net.ConnectionSender;
 import uk.wwws.checkers.net.threads.ConnectionDataHandler;
 import uk.wwws.checkers.ui.GUI;
+import uk.wwws.checkers.ui.TUI;
 
 public class AIApp extends ClientLikeApp implements ConnectionSender, ConnectionDataHandler {
     private static final Logger logger = LogManager.getRootLogger();
@@ -72,7 +73,7 @@ public class AIApp extends ClientLikeApp implements ConnectionSender, Connection
 
     @Override
     public void run() {
-        this.ui = new GUI();
+        this.ui = new TUI();
         ui.setApp(this);
         ui.run();
     }

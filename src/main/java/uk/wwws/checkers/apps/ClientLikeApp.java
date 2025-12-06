@@ -7,6 +7,7 @@ import uk.wwws.checkers.ErrorType;
 import uk.wwws.checkers.apps.exceptions.ServerErrorException;
 import uk.wwws.checkers.game.Checker;
 import uk.wwws.checkers.game.CheckersGame;
+import uk.wwws.checkers.game.Game;
 import uk.wwws.checkers.game.Player;
 import uk.wwws.checkers.game.moves.CheckersMove;
 import uk.wwws.checkers.game.moves.Move;
@@ -239,5 +240,10 @@ public abstract class ClientLikeApp
         logger.info("Created new connection");
         ui.handleAction(UIAction.CONNECTED, null, true);
         return ErrorType.NONE;
+    }
+
+    @Override
+    public @Nullable Game getGameState() {
+        return game;
     }
 }

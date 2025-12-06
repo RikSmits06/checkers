@@ -1,11 +1,13 @@
 package uk.wwws.checkers.ui.controllers;
 
+import java.util.Scanner;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import uk.wwws.checkers.ui.CommandAction;
 import uk.wwws.checkers.ui.GUI;
 import uk.wwws.checkers.ui.UI;
 
@@ -20,4 +22,14 @@ public class GameController extends ReferencedController {
     public Label stateLabel;
     @FXML
     public GridPane gameBoard;
+
+    @FXML
+    protected void onJoinQueueButtonAction() {
+        gui.getApp().handleAction(CommandAction.QUEUE, new Scanner(""));
+    }
+
+    @FXML
+    protected void onDisconnectButtonAction() {
+        gui.getApp().handleAction(CommandAction.DISCONNECT, new Scanner(""));
+    }
 }

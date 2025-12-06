@@ -2,6 +2,7 @@ package uk.wwws.checkers.game;
 
 import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.wwws.checkers.game.moves.Move;
 
 public interface Game {
@@ -16,4 +17,6 @@ public interface Game {
     boolean isValidMove(@NotNull Move move);
 
     void doMove(@NotNull Move move);
+
+    @NotNull Board getBoard();
 }
