@@ -7,32 +7,34 @@ import javafx.scene.Scene;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.wwws.checkers.ui.CommandAction;
 import uk.wwws.checkers.ui.GUI;
 import uk.wwws.checkers.ui.UI;
+import uk.wwws.checkers.ui.UIAction;
 import uk.wwws.checkers.ui.controllers.ReferencedController;
 
 abstract public class StaticScene {
     private static final Logger logger = LogManager.getRootLogger();
 
-    protected final String SCENE_FILE_URL;
-    protected GUI gui;
+    protected final String sceneFileURL;
+    protected @NotNull GUI gui;
 
     protected StaticScene(@NotNull String sceneFileUrl, @NotNull GUI gui) {
-        SCENE_FILE_URL = sceneFileUrl;
+        sceneFileURL = sceneFileUrl;
         this.gui = gui;
     }
 
-    abstract public void handleAction(@NotNull CommandAction action, @NotNull Scanner data);
+    abstract public void handleAction(@NotNull UIAction action, @Nullable Scanner data);
 
     protected void initialize() {
         gui.setLoader(new FXMLLoader());
-        gui.getLoader().setLocation(getClass().getResource("/" + SCENE_FILE_URL));
+        gui.getLoader().setLocation(getClass().getResource("/" + sceneFileURL));
         Scene scene;
         try {
             scene = new Scene(gui.getLoader().load(), 1200, 600);
         } catch (IOException e) {
-            logger.error("Could not load scene: {} {}", SCENE_FILE_URL, e.getMessage());
+            logger.error("Could not load scene: {} {}", sceneFileURL, e.getMessage());
             e.printStackTrace();
             return;
         }
@@ -40,10 +42,10 @@ abstract public class StaticScene {
         ((ReferencedController)(gui.getLoader().getController())).setGui(gui);
 
         if (gui.getCurrentStage() == null) {
-            logger.error("Current scene is null while loading url: {}", SCENE_FILE_URL);
+            logger.error("Current scene is null while loading url: {}", sceneFileURL);
             return;
         }
-        gui.getCurrentStage().setTitle("Checkers " + SCENE_FILE_URL);
+        gui.getCurrentStage().setTitle("Checkers " + sceneFileURL);
         gui.getCurrentStage().setScene(scene);
         gui.getCurrentStage().show();
     }

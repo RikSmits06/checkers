@@ -28,7 +28,8 @@ public class TUI implements UI, DataParser {
     }
 
     @Override
-    public void handleAction(@NotNull CommandAction action, @NotNull Scanner data) {
+    public void handleAction(@NotNull UIAction action, @Nullable Scanner data) {
+        
     }
 
     public void run() {
@@ -46,5 +47,7 @@ public class TUI implements UI, DataParser {
             }
             app.handleAction(nextAction, scanner);
         }
+
+        System.exit(0);
     }
 }

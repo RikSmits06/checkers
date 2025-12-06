@@ -3,6 +3,7 @@ package uk.wwws.checkers.ui.scenes;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import uk.wwws.checkers.ui.GUI;
 import uk.wwws.checkers.ui.UI;
 
@@ -24,7 +25,7 @@ public class SceneManager {
         return currentScene;
     }
 
-    public <T> void loadScene(Class<T> sceneClass, GUI gui) {
+    public <T> void loadScene(Class<T> sceneClass, @NotNull GUI gui) {
         try {
             currentScene = (StaticScene) sceneClass.getDeclaredConstructor(GUI.class).newInstance(gui);
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {

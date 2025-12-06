@@ -10,6 +10,7 @@ public class ReferencedController {
         this.gui = gui;
     }
 
+    @SuppressWarnings("unused") // reflections
     public ReferencedController(GUI gui) {
         this.gui = gui;
     }

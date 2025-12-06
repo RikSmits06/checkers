@@ -12,21 +12,22 @@ import javafx.scene.shape.Rectangle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.wwws.checkers.game.Checker;
 import uk.wwws.checkers.ui.CommandAction;
 import uk.wwws.checkers.ui.GUI;
+import uk.wwws.checkers.ui.UIAction;
 import uk.wwws.checkers.ui.controllers.GameController;
 
 public class GameScene extends StaticScene {
     private static final Logger logger = LogManager.getRootLogger();
 
-    public GameScene(GUI gui) {
+    public GameScene(@NotNull GUI gui) {
         super("Game.fxml", gui);
     }
 
-
     @Override
-    public void handleAction(@NotNull CommandAction action, @NotNull Scanner data) {
+    public void handleAction(@NotNull UIAction action, @Nullable Scanner data) {
 
     }
 

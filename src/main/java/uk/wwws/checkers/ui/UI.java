@@ -7,7 +7,7 @@ import uk.wwws.checkers.ErrorType;
 import uk.wwws.checkers.apps.App;
 
 public interface UI {
-    void handleAction(@NotNull CommandAction action, @NotNull Scanner data);
+    void handleAction(@NotNull UIAction action, @Nullable Scanner data);
     void run();
 
     void setApp(@NotNull App app);

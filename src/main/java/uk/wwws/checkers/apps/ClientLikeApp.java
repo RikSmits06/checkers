@@ -1,7 +1,6 @@
 package uk.wwws.checkers.apps;
 
 import java.util.Scanner;
-import javafx.application.Application;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.wwws.checkers.ErrorType;
@@ -18,7 +17,6 @@ import uk.wwws.checkers.net.exceptions.FailedToConnectException;
 import uk.wwws.checkers.net.threads.ConnectionDataHandler;
 import uk.wwws.checkers.net.threads.ServerConnectionThread;
 import uk.wwws.checkers.ui.CommandAction;
-import uk.wwws.checkers.ui.SimpleGUI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.wwws.checkers.ui.UI;
