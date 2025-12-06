@@ -1,9 +1,14 @@
 package uk.wwws.checkers.ui.scenes;
 
 import java.util.Scanner;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
@@ -27,6 +32,7 @@ public class GameScene extends StaticScene {
 
     private GameController controller;
     private Checker perspective = Checker.WHITE;
+    private int selectedId = -1;
 
     public GameScene(@NotNull GUI gui) {
         super("Game.fxml", gui);
@@ -71,6 +77,8 @@ public class GameScene extends StaticScene {
                 GridPane.setHgrow(rect, Priority.ALWAYS);
                 GridPane.setVgrow(rect, Priority.ALWAYS);
 
+                addMoveHandler(rect, i, j);
+
                 controller.gameBoard.getChildren().add(rect);
             }
         }
@@ -90,11 +98,12 @@ public class GameScene extends StaticScene {
             int row = gui.getApp().getGameState().getBoard().getRow(i);
             int col = gui.getApp().getGameState().getBoard().getCol(i);
             if (perspective.sameColor(Checker.BLACK)) {
-                row = board.getBoardDim() - row - 1;
+                row = Board.DIM - row - 1;
             }
             addPiece(gui.getApp().getGameState().getBoard().getField(i), row, col);
         });
     }
+
 
     private void addPiece(Checker piece, int row, int col) {
         switch (piece) {
@@ -105,8 +114,39 @@ public class GameScene extends StaticScene {
         }
     }
 
-    private void addPawn(Paint color, int row, int col) {
-        Circle circle = new Circle(20);
+    private void addMoveHandler(@NotNull Node node, int row, int col) {
+        node.setOnMouseClicked((MouseEvent _) -> {
+            System.out.println("clicked" + row + " " + col + " " + selectedId + " " +
+                                       gui.getApp().getGameState().getBoard().getField(row, col));
+
+            if (gui.getApp().getGameState().getBoard().getField(row, col) != Checker.EMPTY) {
+                selectedId = gui.getApp().getGameState().getBoard().index(row, col);
+                if (perspective == Checker.BLACK) {
+                    selectedId =
+                            gui.getApp().getGameState().getBoard().index(Board.DIM - row - 1, col);
+                }
+
+                System.out.println("New id: " + selectedId);
+                return;
+            }
+
+            if (selectedId != -1) {
+                String coords =
+                        selectedId + " " + gui.getApp().getGameState().getBoard().index(row, col);
+
+                if (perspective == Checker.BLACK) {
+                    coords = selectedId + " " +
+                            gui.getApp().getGameState().getBoard().index(Board.DIM - row - 1, col);
+                }
+
+                gui.getApp().handleAction(CommandAction.MOVE, new Scanner(coords));
+            }
+        });
+    }
+
+    private Circle createMovablePiece(Paint color, int row, int col) {
+        Circle circle = new Circle(
+                controller.gameBoard.getRowConstraints().getFirst().getPrefHeight() / 1.5);
 
         circle.setFill(color);
 
@@ -116,23 +156,20 @@ public class GameScene extends StaticScene {
         GridPane.setHgrow(circle, Priority.ALWAYS);
         GridPane.setVgrow(circle, Priority.ALWAYS);
 
-        
+        addMoveHandler(circle, row, col);
 
-        controller.gameBoard.getChildren().add(circle);
+        return circle;
     }
 
     private void addQueen(Paint color, int row, int col) {
-        Circle circle = new Circle(20);
+        Circle piece = createMovablePiece(color, row, col);
+        piece.setStroke(Color.GOLD);
+        piece.setStrokeWidth(3);
+        controller.gameBoard.getChildren().add(piece);
+    }
 
-        circle.setFill(color);
-
-        GridPane.setConstraints(circle, col, row);
-        GridPane.setFillWidth(circle, true);
-        GridPane.setFillHeight(circle, true);
-        GridPane.setHgrow(circle, Priority.ALWAYS);
-        GridPane.setVgrow(circle, Priority.ALWAYS);
-
-        controller.gameBoard.getChildren().add(circle);
+    private void addPawn(Paint color, int row, int col) {
+        controller.gameBoard.getChildren().add(createMovablePiece(color, row, col));
     }
 
     @Override

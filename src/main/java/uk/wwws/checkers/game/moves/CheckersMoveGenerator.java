@@ -62,6 +62,7 @@ public class CheckersMoveGenerator implements MoveGenerator {
                                                                          board.getCol(index))
                 .and(allPieces.not());
         PositionedBitboard pCaptures = new PositionedBitboard(Board.DIM, 0, captures);
+
         accountForSide(piece, pCaptures);
 
         PositionedBitboard move =
@@ -91,12 +92,14 @@ public class CheckersMoveGenerator implements MoveGenerator {
     }
 
     private void accountForSide(@NotNull Checker piece, @NotNull PositionedBitboard bitboard) {
-        if (!piece.isQueen()) {
-            if (piece.sameColor(Checker.WHITE)) {
-                bitboard.from(bitboard.forward());
-            } else {
-                bitboard.from(bitboard.backward());
-            }
+        if (piece.isQueen()) {
+            return;
+        }
+
+        if (piece.sameColor(Checker.WHITE)) {
+            bitboard.from(bitboard.forward());
+        } else {
+            bitboard.from(bitboard.backward());
         }
     }
 
