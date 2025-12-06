@@ -32,6 +32,7 @@ tasks.register<JavaExec>("runServer") {
     group = "application"
     mainClass.set("uk.wwws.checkers.apps.entrypoints.ServerApp")
     classpath = sourceSets["main"].runtimeClasspath
+    standardInput = System.`in`;
 }
 
 tasks.register<JavaExec>("runAI") {
@@ -68,6 +69,11 @@ tasks.register<Jar>("jarServer") {
     }
     from(sourceSets["main"].runtimeClasspath, configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.register("jarAll") {
+    group = "build"
+    dependsOn("jarAI", "jarServer", "jarClient")
 }
 
 javafx {
