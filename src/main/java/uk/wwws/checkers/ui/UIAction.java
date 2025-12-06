@@ -5,5 +5,9 @@ public enum UIAction {
     DISCONNECT,
     CONNECTED,
     ASSIGN_COLOR,
-    GAMEOVER
+    GAME_WON,
+    GAME_LOST,
+    JOINED_QUEUE,
+    LEFT_QUEUE,
+    YOUR_MOVE
 }

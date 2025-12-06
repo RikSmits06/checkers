@@ -14,10 +14,15 @@ public class CheckersGame implements Game {
     private final Board board;
     private final HashMap<Checker, Player> players = new HashMap<>();
     private Checker turn;
+    private Player setLoser; // match fixing
 
     public CheckersGame() {
         board = new Board();
         turn = Checker.WHITE;
+    }
+
+    public void setSetLoser(@NotNull Player setLoser) {
+        this.setLoser = setLoser;
     }
 
     //@ pure
@@ -31,13 +36,27 @@ public class CheckersGame implements Game {
         return players.get(turn);
     }
 
-    @Override
-    public @Nullable Player getWinner() {
-        if (!board.hasWinner()) {
-            return null;
+    private @Nullable Player getOtherPlayer(@NotNull Player player) {
+        for (Player other : getPlayers()) {
+            if (other != player) {
+                return other;
+            }
         }
 
-        return players.get(board.isWinner(Checker.WHITE) ? Checker.WHITE : Checker.BLACK);
+        return null;
+    }
+
+    @Override
+    public @Nullable Player getWinner() {
+        if (setLoser != null) {
+            return getOtherPlayer(setLoser);
+        }
+
+        if (getValidMoves().isEmpty()) {
+            players.get(turn.other());
+        }
+
+        return null;
     }
 
     @Override
@@ -101,6 +120,10 @@ public class CheckersGame implements Game {
 
     public Collection<Player> getPlayers() {
         return players.values();
+    }
+
+    public @Nullable Player getPlayer(@NotNull Checker color) {
+        return players.get(color);
     }
 
     public void addPlayer(@NotNull Player player, @NotNull Checker c) {

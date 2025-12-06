@@ -24,7 +24,8 @@ import uk.wwws.checkers.net.threads.ServerThread;
 import uk.wwws.checkers.ui.CommandAction;
 import uk.wwws.checkers.ui.UI;
 
-public abstract class ServerLikeApp implements App, ConnectionReceiver, ConnectionDataHandler, NewConnectionHandler {
+public abstract class ServerLikeApp
+        implements App, ConnectionReceiver, ConnectionDataHandler, NewConnectionHandler {
     private static final Logger logger = LogManager.getRootLogger();
 
     protected UI ui;
@@ -45,7 +46,7 @@ public abstract class ServerLikeApp implements App, ConnectionReceiver, Connecti
             }
             case null, default -> {
                 logger.error(
-                    "Invalid command or wrong argument usage. Type help to get command list");
+                        "Invalid command or wrong argument usage. Type help to get command list");
                 return ErrorType.ERROR;
             }
         }
@@ -125,6 +126,7 @@ public abstract class ServerLikeApp implements App, ConnectionReceiver, Connecti
             switch (PacketAction.valueOf(input.next().toUpperCase())) {
                 case QUEUE -> handleQueue(c);
                 case MOVE -> handleMove(input, c);
+                case GIVE_UP -> handleGiveUp(c);
                 case BYE, ERROR -> {
                     handleDisconnect(c);
                     return ErrorType.FATAL;
@@ -142,6 +144,21 @@ public abstract class ServerLikeApp implements App, ConnectionReceiver, Connecti
         return ErrorType.NONE;
     }
 
+    private void handleGiveUp(@NotNull Connection c) {
+        if (connectionIsNotAThread(c)) {
+            logger.error("Connection is not a thread: {}", c);
+            return;
+        }
+
+        ConnectedPlayer player = getConnectedPlayer(c).getPlayer();
+        if (player.getGame() == null) {
+            return;
+        }
+
+        player.getGame().setSetLoser(player);
+        disconnectPlayers(player.getGame());
+    }
+
     private void handleQueue(@NotNull Connection c) {
         if (connectionIsNotAThread(c)) {
             return;
@@ -149,7 +166,8 @@ public abstract class ServerLikeApp implements App, ConnectionReceiver, Connecti
 
         ConnectedPlayer player = getConnectedPlayer(c).getPlayer();
         if (queue.contains(player)) {
-            player.getConnection().write(PacketAction.ERROR);
+            player.getConnection().write(PacketAction.LEFT_QUEUE);
+            queue.remove(player);
             return;
         }
 
@@ -159,13 +177,26 @@ public abstract class ServerLikeApp implements App, ConnectionReceiver, Connecti
         }
 
         queue.add(player);
+        player.getConnection().write(PacketAction.JOINED_QUEUE);
         checkQueue();
     }
 
-    private void handleGameEnd(@NotNull Player player) {
+    private void handleGameEnd(
+            @NotNull Player player) { // was working on game packets and game end game tie nstuff
         if (player instanceof ConnectedPlayer cp) {
+            if (cp.getGame().getWinner() == cp) {
+                cp.getConnection().write(PacketAction.GAME_WON);
+            } else {
+                cp.getConnection().write(PacketAction.GAME_LOST);
+            }
+
             cp.setGame(null);
-            cp.getConnection().write(PacketAction.GAMEOVER);
+        }
+    }
+
+    private void disconnectPlayers(@NotNull CheckersGame game) {
+        for (Player otherPlayer : game.getPlayers()) {
+            handleGameEnd(otherPlayer);
         }
     }
 
@@ -175,13 +206,11 @@ public abstract class ServerLikeApp implements App, ConnectionReceiver, Connecti
             return;
         }
 
-        // TODO figure out why other players are not getting notified
         ConnectedClientThread clientThread = getConnectedPlayer(c);
         ConnectedPlayer player = clientThread.getPlayer();
         if (player.getGame() != null) {
-            for (Player otherPlayer : player.getGame().getPlayers()) {
-                handleGameEnd(otherPlayer);
-            }
+            player.getGame().setSetLoser(player);
+            disconnectPlayers(player.getGame());
         }
 
         clientThread.interrupt();
@@ -237,15 +266,24 @@ public abstract class ServerLikeApp implements App, ConnectionReceiver, Connecti
             CheckersGame game = new CheckersGame();
             ConnectedPlayer player1 = queue.poll();
             ConnectedPlayer player2 = queue.poll();
-            game.addPlayer(player1, Checker.WHITE);
-            game.addPlayer(player2, Checker.BLACK);
+            // todo this randomization needs to be moved inside the game
+            if (Math.random() >= 0.5) {
+                game.addPlayer(player1, Checker.WHITE);
+                game.addPlayer(player2, Checker.BLACK);
+            } else {
+                game.addPlayer(player2, Checker.WHITE);
+                game.addPlayer(player1, Checker.BLACK);
+            }
+
             player1.setGame(game);
             player2.setGame(game);
 
-            player1.getConnection().write(PacketAction.ASSIGN_COLOR, Checker.WHITE.name())
-                    .write(PacketAction.GAMESTART);
-            player2.getConnection().write(PacketAction.ASSIGN_COLOR, Checker.BLACK.name())
-                    .write(PacketAction.GAMESTART);
+            ((ConnectedPlayer) game.getPlayer(Checker.WHITE)).getConnection()
+                    .write(PacketAction.ASSIGN_COLOR, Checker.WHITE.name())
+                    .write(PacketAction.YOUR_MOVE);
+
+            ((ConnectedPlayer) game.getPlayer(Checker.BLACK)).getConnection()
+                    .write(PacketAction.ASSIGN_COLOR, Checker.WHITE.name());
 
             checkQueue();
         }

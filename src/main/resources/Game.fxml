@@ -30,5 +30,6 @@
       <Button fx:id="disconnectButton" layoutX="247.0" layoutY="270.0" mnemonicParsing="false" onAction="#onDisconnectButtonAction" text="Disconnect" />
       <Button fx:id="joinQueueButton" layoutX="248.0" layoutY="305.0" mnemonicParsing="false" onAction="#onJoinQueueButtonAction" text="Join queue" />
       <Label fx:id="stateLabel" layoutX="571.0" layoutY="72.0" text="Connected" />
+      <Button fx:id="giveUpButton" disable="true" layoutX="247.0" layoutY="235.0" mnemonicParsing="false" onAction="#onGiveUpButtonAction" prefHeight="25.0" prefWidth="73.0" text="Give up" />
     </children>
 </Pane>

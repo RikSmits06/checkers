@@ -54,9 +54,12 @@ public abstract class ClientLikeApp
             switch (PacketAction.valueOf(input.next().toUpperCase())) {
                 case ASSIGN_COLOR -> handleColorAssign(input);
                 case MOVE -> handleReceiveMove(input);
-                case GAMEOVER -> handleGameOver();
-                case GAMESTART -> handleGameStart();
+                case GAME_WON -> handleGameWon();
+                case GAME_LOST -> handleGameLost();
+                case YOUR_MOVE -> handleYourMove();
                 case ERROR -> handleError();
+                case JOINED_QUEUE -> handleJoinedQueue();
+                case LEFT_QUEUE -> handleLeftQueue();
                 case BYE -> {
                     handleDisconnect();
                     return ErrorType.FATAL;
@@ -78,21 +81,37 @@ public abstract class ClientLikeApp
         this.game = new CheckersGame();
     }
 
+    protected void handleJoinedQueue() {
+        logger.info("Server put us in the queue");
+        ui.handleAction(UIAction.JOINED_QUEUE, null, true);
+    }
+
+    protected void handleLeftQueue() {
+        logger.info("Server removed us from the queue");
+        ui.handleAction(UIAction.LEFT_QUEUE, null, true);
+    }
+
     protected void handleError() throws ServerErrorException {
         logger.error("Server sent back an error");
         throw new ServerErrorException("Server sent back an error");
     }
 
-    protected void handleGameStart() {
-        logger.info("Your game has started");
+    protected void handleYourMove() {
+        logger.info("Its your move");
         handleState();
-        ui.handleAction(UIAction.BOARD_SYNC, null, true);
+        ui.handleAction(UIAction.YOUR_MOVE, null, true);
     }
 
-    protected void handleGameOver() {
-        logger.info("Game has ended");
+    protected void handleGameWon() {
+        logger.info("You won the game");
         game = new CheckersGame();
-        ui.handleAction(UIAction.GAMEOVER, null, true);
+        ui.handleAction(UIAction.GAME_WON, null, true);
+    }
+
+    protected void handleGameLost() {
+        logger.info("You lost the game");
+        game = new CheckersGame();
+        ui.handleAction(UIAction.GAME_LOST, null, true);
     }
 
     protected void handleColorAssign(@NotNull Scanner input) {
@@ -161,12 +180,21 @@ public abstract class ClientLikeApp
             case QUEUE -> {
                 return handleQueue();
             }
+            case GIVE_UP -> {
+                return handleGiveUp();
+            }
             case null, default -> {
                 logger.error(
                         "Invalid command or wrong argument usage. Type help to get command list");
                 return ErrorType.ERROR;
             }
         }
+    }
+
+    protected @NotNull ErrorType handleGiveUp() {
+        logger.debug("Sending a give up command to server");
+        connectionThread.getConnection().write(PacketAction.GIVE_UP);
+        return ErrorType.NONE;
     }
 
     protected @NotNull ErrorType handleQueue() {

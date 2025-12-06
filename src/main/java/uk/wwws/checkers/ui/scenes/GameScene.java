@@ -47,14 +47,34 @@ public class GameScene extends StaticScene {
             case DISCONNECT -> {
                 SceneManager.getInstance().loadScene(LobbyScene.class, gui);
             }
-            case GAMEOVER -> {
-                controller.stateLabel.setText("Your game has ended");
-                drawBoard(perspective);
+            case GAME_WON -> {
+                controller.stateLabel.setText("You won!");
+                controller.joinQueueButton.setDisable(false);
+                controller.giveUpButton.setDisable(true);
+            }
+            case GAME_LOST -> {
+                controller.stateLabel.setText("You lost!");
+                controller.joinQueueButton.setDisable(false);
+                controller.giveUpButton.setDisable(true);
+            }
+            case LEFT_QUEUE -> {
+                controller.stateLabel.setText("You left the queue");
+                controller.joinQueueButton.setText("Join queue");
+            }
+            case JOINED_QUEUE -> {
+                controller.stateLabel.setText("You joined the queue");
+                controller.joinQueueButton.setText("Leave queue");
+            }
+            case YOUR_MOVE -> {
+                controller.stateLabel.setText("It's your turn to move");
             }
             case ASSIGN_COLOR -> {
                 // change perspective variable
                 perspective = Checker.valueOf(data.next());
                 drawBoard(perspective);
+                controller.joinQueueButton.setText("Join queue");
+                controller.joinQueueButton.setDisable(true);
+                controller.giveUpButton.setDisable(false);
             }
         }
     }

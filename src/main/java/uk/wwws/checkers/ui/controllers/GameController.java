@@ -25,6 +25,13 @@ public class GameController extends ReferencedController {
     public GridPane gameBoard;
     @FXML
     public Pane backgroundPane;
+    @FXML
+    public Button giveUpButton;
+
+    @FXML
+    protected void onGiveUpButtonAction() {
+        gui.getApp().handleAction(CommandAction.GIVE_UP, new Scanner(""));
+    }
 
     @FXML
     protected void onJoinQueueButtonAction() {
