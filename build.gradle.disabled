@@ -14,11 +14,6 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.media' ]
 }
 
-plugins {
-    id 'java'
-}
-
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(22)
