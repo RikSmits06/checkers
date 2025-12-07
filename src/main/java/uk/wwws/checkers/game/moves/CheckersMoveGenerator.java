@@ -70,20 +70,30 @@ public class CheckersMoveGenerator implements MoveGenerator {
 
 
         for (Integer emptyCaptureSquare : accountedCaptures.getOnIndexes()) {
-            int row1 = board.getRow(index);
-            int col1 = board.getCol(index);
-            int row2 = board.getRow(emptyCaptureSquare);
-            int col2 = board.getCol(emptyCaptureSquare);
+            int piceRow = board.getRow(index);
+            int pieceCol = board.getCol(index);
+            int emptyCaptureRow = board.getRow(emptyCaptureSquare);
+            int emptyCaptureCol = board.getCol(emptyCaptureSquare);
 
             external:
             for (int i = 0; i < 2; i++) {
                 for (int j = -1; j < 2; j += 2) {
                     Bitboard rest = new Bitboard(Board.DIM);
-                    rest.setPos(row2, col2, true);
+                    rest.setPos(emptyCaptureRow, emptyCaptureCol, true);
+
+                    Bitboard ray = Bitboard.diagonalRay(3 * j, piceRow, pieceCol, i == 0,
+                                                        rest.getBoardDim());
+
+                    // make sure the ray captures the empty square
+                    if (rest.and(ray).getOnIndexes().size() != 1) {
+                        continue;
+                    }
+
                     rest.xor(oppPieces);
-                    if (board.getDistance(row1, col1, row2, col2) >= 2 && rest.and(
-                                    Bitboard.diagonalRay(3 * j, row1, col1, i == 0, rest.getBoardDim()))
-                            .getOnIndexes().size() == 2) {
+                    System.out.println(rest + " " + piceRow + " " + pieceCol);
+
+                    if (board.getDistance(piceRow, pieceCol, emptyCaptureRow, emptyCaptureCol) >=
+                            2 && rest.and(ray).getOnIndexes().size() == 2) {
                         legalMoves.add(new CheckersMove(index, emptyCaptureSquare));
                         break external;
                     }
