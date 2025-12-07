@@ -92,6 +92,10 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.22.0")
     implementation("org.apache.logging.log4j:log4j-core:2.22.0")
 
+    runtimeOnly("org.openjfx:javafx-graphics:$javafx.version:win")
+    runtimeOnly("org.openjfx:javafx-graphics:$javafx.version:linux")
+    runtimeOnly("org.openjfx:javafx-graphics:$javafx.version:mac")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
